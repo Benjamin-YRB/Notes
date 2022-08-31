@@ -786,7 +786,19 @@ Map<String, List<Dish>> level = menu.stream
 
 #### 多级分组
 
-​	groupingBy收集器有双参数版本，除了接受普通的分组函数之外，还可以接受collector类型的第二个参数进行二级分组	
+​	groupingBy收集器有双参数版本，除了接受普通的分组函数之外，还可以接受collector类型的第二个参数，可以把内层groupingBy传递给外层groupBy，并定义一个为流中项目分类的二级标准，如下所示
+
+```java
+Map<String,Map<String,Dish>>   map =  menu.stream().collect(groupingBy(Dish::getType,groupingBy(Dish::getName)));
+```
+
+#### 按子组收集数据
+
+​	双参数版本的groupingBy第二个参数传入的可以是任何类型，而不一定是另一个groupingBy
+
+
+
+
 
 
 
@@ -998,7 +1010,39 @@ String names = people.stream()
 
 
 
-### 分组
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
