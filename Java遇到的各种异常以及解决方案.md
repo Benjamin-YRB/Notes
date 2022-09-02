@@ -26,7 +26,7 @@ at com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:53)
 
 
 
-#### Idea编译时出现GC overhead limit exceeded
+## Idea编译时出现GC overhead limit exceeded
 
 ![企业微信截图_f282c4cc-54d7-4add-80f4-4c54838c361f](/Users/yangxiansheng/笔记/images/企业微信截图_f282c4cc-54d7-4add-80f4-4c54838c361f.png)
 
@@ -193,7 +193,7 @@ FROM
     group by t.creator
 ```
 
-#### 打印GC日志
+### 打印GC日志
 
 -XX:+PrintGCDetails
 
@@ -221,100 +221,15 @@ java虚拟机启动参数配置错误，去掉或者重新检查参数。
 
 
 
+##### MySQL查询24小时内数据
 
-
-
-
-
-
-byte数组转String：
-
-```java
-byte[] bytes = "中文".getBytes();
-String result = new String(bytes,StandardCharsets.UTF_8);
+```sql
+where time >= (now() - interval 24 hour)
 ```
 
 
 
 
 
-#### 多线程下使用SimpleDateFormat转换异常
-
-时间点有可能会是1970年
-
-
-
-
-
-#### httpclient发送delete请求无法携带请求体
-
-重写一个delete方法继承post方法的父类即可。
-
-![image-20220426135434198](images\image-20220426135434198.png)
-
-
-
-#### idea启动tomcat在多少毫秒部署完成后卡住 不运行项目
-
-解决方案：尝试调整一下tomcat的虚拟机内存参数。
-
-
-
-
-
-
-
-#### 老Web项目变更依赖
-
-在新加的jar包右键 add as Library
-
-
-
-
-
-#### 记一次sql优化经历
-
-多条件or查询有可能使索引失效，可以使用union拆开or条件查询 走单独的索引即可。
-
-
-
-#### 初始方案
-
-##### 安卓listView每滚动一次都会执行一次adapter中onBindITemView方法，然后我在item中的一个输入框添加了addTextChangedListener文本监听器来同步我修改item的值，每次滚动都会刷新item，从底部拉到顶，末尾的item的输入框的值会覆盖第一个item输入框的值--莫名其妙的BUG
-
-
-
-#### 方案二
-
-##### setOnFocusChangeListener添加了焦点改变事件无用，只有在获取焦点时生效，当焦点在文本框时直接点击签收按钮，不会触发失去焦点事件，无法同步修改datalist中的值。
-
-#### --解决方案
-
-方案二改进： 签收按钮事件中移除文本框焦点  用以触发文本框失焦事件
-
-
-
-请求进来后卡住不往下走了  后续请求也无法响应，这时确认一下本机CPU资源
-
-
-
-
-
-
-
-
-
-
-
-
-
-#### spring ioc容器根据bean名称找不到bean
-
-
-
-解决过程：检查xml配置的包扫描路径，没有问题，
-
-![image-20220610175225121](images\image-20220610175225121.png)
-
-
+#### gitlab在线解决merge request时解决冲突会将目标分支合并到源分支，因此需要有目标分支推送权限的人在本地合并，不能在线合并。
 
