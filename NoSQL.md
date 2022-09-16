@@ -1,4 +1,4 @@
-### NoSQL
+# NoSQL
 
 分类：
 
@@ -67,13 +67,7 @@
 - ttl：查看当前key的剩余时间。ttl keyName
 - type：查看当前key的数据类型   type keyName  
 
-###  redis默认安装路径
-
-![image-20201011112012420]( images/image-20201011112012420.png)
-
-**本机redis.conf配置文件所处位置：**/usr/local/bin/yang/redis.conf
-
-### redis基础知识
+### 基础知识
 
 - 默认有16个数据库，默认使用第一个  索引是第0个
 - select 切换数据库 select 7
@@ -117,13 +111,13 @@ ttl key
 
 
 
-### redis的数据类型
+### 数据类型
 
 #### 五大基础类型
 
 ##### String
 
-##### 简介
+简介
 
 > ​	String是redis最基本的类型，一个key对应一个value。
 >
@@ -824,9 +818,149 @@ bitmaps：数据结构，操作二进制来记录，类似boolean
 
 ```
 
+### Redis配置文件
+
+1. ##### 单位
+
+```bash
+# Note on units: when memory size is needed, it is possible to specify
+# it in the usual form of 1k 5GB 4M and so forth:
+#
+# 1k => 1000 bytes 
+# 1kb => 1024 bytes
+# 1m => 1000000 bytes
+# 1mb => 1024*1024 bytes
+# 1g => 1000000000 bytes
+# 1gb => 1024*1024*1024 bytes
+#
+# units are case insensitive so 1GB 1Gb 1gB are all the same.
+```
+
+2. ##### 包含
+
+```bash
+################################## INCLUDES ###################################
+
+# Include one or more other config files here.  This is useful if you
+# have a standard template that goes to all Redis servers but also need
+# to customize a few per-server settings.  Include files can include
+# other files, so use this wisely.
+#
+# Notice option "include" won't be rewritten by command "CONFIG REWRITE"
+# from admin or Redis Sentinel. Since Redis always uses the last processed
+# line as value of a configuration directive, you'd better put includes
+# at the beginning of this file to avoid overwriting config change at runtime.
+#
+# If instead you are interested in using includes to override configuration
+# options, it is better to use include as the last line.
+#
+# include .\path\to\local.conf
+# include c:\path\to\other.conf
+```
+
+3. ##### 网络
+
+```bash
+# By default, if no "bind" configuration directive is specified, Redis listens
+# for connections from all the network interfaces available on the server.
+# It is possible to listen to just one or multiple selected interfaces using
+# the "bind" configuration directive, followed by one or more IP addresses.
+#
+# Examples:
+#
+# bind 192.168.1.100 10.0.0.1
+# bind 127.0.0.1 ::1
+#
+# ~~~ WARNING ~~~ If the computer running Redis is directly exposed to the
+# internet, binding to all the interfaces is dangerous and will expose the
+# instance to everybody on the internet. So by default we uncomment the
+# following bind directive, that will force Redis to listen only into
+# the IPv4 loopback interface address (this means Redis will be able to
+# accept connections only from clients running into the same computer it
+# is running).
+#
+# IF YOU ARE SURE YOU WANT YOUR INSTANCE TO LISTEN TO ALL THE INTERFACES
+# JUST COMMENT THE FOLLOWING LINE
+#指定ip才可访问Redis实例.可指定多个
+bind 127.0.0.1
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Protected mode is a layer of security protection, in order to avoid that
+# Redis instances left open on the internet are accessed and exploited.
+#
+# When protected mode is on and if:
+#
+# 1) The server is not binding explicitly to a set of addresses using the
+#    "bind" directive.
+# 2) No password is configured.
+#
+# The server only accepts connections from clients connecting from the
+# IPv4 and IPv6 loopback addresses 127.0.0.1 and ::1, and from Unix domain
+# sockets.
+#
+# By default protected mode is enabled. You should disable it only if
+# you are sure you want clients from other hosts to connect to Redis
+# even if no authentication is configured, nor a specific set of interfaces
+# are explicitly listed using the "bind" directive.
+#保护模式
+#保护模式开启时，若没有bind指定ip或者没有设置密码，那么只能本地回环访问（localhost）
+protected-mode yes
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Accept connections on the specified port, default is 6379 (IANA #815344).
+# If port 0 is specified Redis will not listen on a TCP socket.
+#指定端口，默认是6370，若端口为0，则Redis不监听TCP连接
+port 6379
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# TCP listen() backlog.
+#
+# In high requests-per-second environments you need an high backlog in order
+# to avoid slow clients connections issues. Note that the Linux kernel
+# will silently truncate it to the value of /proc/sys/net/core/somaxconn so
+# make sure to raise both the value of somaxconn and tcp_max_syn_backlog
+# in order to get the desired effect.
+
+#设置tcp的backlog，backlog是一个连接队列，队列总和=未完成三次握手队列+已完成三次握手队列。
+#在高并发环境下需要配置一个高backlog值来避免慢客户端的问题。
+#注意Linux内核会将这个值减小到/proc/sys/net/core/somaxconn的值（128），所以需要确认增大/proc/sys/net/core/somaxconn和/proc/sys/net/ipv4/tcp_max_syn_backlog(128)来达到想要的效果
+tcp-backlog 511
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Close the connection after a client is idle for N seconds (0 to disable)
+#超时时间，经过多少秒之后关闭连接，0即永不超时
+timeout 0
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# TCP keepalive.
+#
+# If non-zero, use SO_KEEPALIVE to send TCP ACKs to clients in absence
+# of communication. This is useful for two reasons:
+#
+# 1) Detect dead peers.
+# 2) Take the connection alive from the point of view of network
+#    equipment in the middle.
+#
+# On Linux, the specified value (in seconds) is the period used to send ACKs.
+# Note that to close the connection the double of the time is needed.
+# On other kernels the period depends on the kernel configuration.
+#
+# A reasonable value for this option is 300 seconds, which is the new
+# Redis default starting with Redis 3.2.1.
+tcp-keepalive 300
+
+```
 
 
-#### 事务
+
+
+
+### 事务
 
 - **Redis单条命令保证原子性，但是Redis事务不保证原子性**
 - Redis事务没有隔离级别的概念，所有的命令在事务中，没有直接被执行，只有发起执行命令的时候才会执行事务。**Exec**
@@ -944,11 +1078,7 @@ QUEUED
 
 
 
-#### springboot整合
-
-#### Redis.conf详解
-
-### reids的持久化方式
+### Redis的持久化方式
 
 redis运行时数据都是放在内存中，若没有持久化，一旦断电则数据就会丢失。redis的持久化配置有两种：RDB（将redis在内存中的数据库记录定时dump到磁盘）和AOF（将redis的操作日志以追加的方式写入文件）
 
@@ -1012,7 +1142,33 @@ appendfsync everysec	#每秒钟同步一次，该策略为AOF的缺省配置
 appendfsync no				#从不同步，高效但是数据不会被持久化
 ```
 
-### redis发布订阅
+### Redis发布订阅
+
+#### 什么是发布订阅？
+
+Redis发布订阅（pub/sub）是一种消息通信模式，发送者发送消息，订阅者接收消息。
+
+Redis客户端可以订阅任意数量的频道。
+
+```bash
+#客户端A订阅频道channel
+subscribe channel
+```
+
+![image-20220714160513485](images\image-20220714160513485.png)
+
+```bash
+#客户端B在频道channel发布信息hello
+publish channel "hello"
+```
+
+![image-20220714160849622](images\image-20220714160849622.png)
+
+客户端A接收到channel的消息
+
+![image-20220714160915672](images\image-20220714160915672.png)
+
+
 
 ### redis主从复制
 

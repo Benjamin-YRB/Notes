@@ -2,7 +2,7 @@
 
 ## 函数式编程
 
-​	把函数作为一等值来传递的程序，在java8之前，只有对象引用和基础类型值才能作为函数方法的入参，在Java8之后，可以使用Stream API来处理集合：将集合转化为stream，然后描述对集合的操作进行并行处理，之后再转化回集合，以下为利用Stream和lambda表达式顺序或并行的从一个列表里筛选比较重的苹果
+​	把函数作为值来传递的程序，在java8之前，只有对象引用和基础类型值才能作为函数方法的入参，在Java8之后，可以使用Stream API来处理集合：将集合转化为stream，然后描述对集合的操作进行并行处理，之后再转化回集合，以下为利用Stream和lambda表达式顺序或并行的从一个列表里筛选比较重的苹果
 
 ```java
 List<apple> collect = inventory.stream().filter(a -> a.getWeight() > 160).collect(Collectors.toList());

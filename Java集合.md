@@ -7,9 +7,9 @@
 - 数组长度固定，集合长度不固定
 - 数组可以存储基本类型和引用类型，集合只能存储引用类型
 
-![image-20201220234101322](/Users/yangxiansheng/笔记/images/image-20201220234101322.png)
+![image-20201220234101322](/images/image-20201220234101322.png)
 
-![img](/Users/yangxiansheng/笔记/images/2243690-9cd9c896e0d512ed.png)
+![img](/images/2243690-9cd9c896e0d512ed.png)
 
 > 由上图可知，Java集合狂啊急主要包含两种类型的容器，集合（collection，存储单个元素）和图（map，存储键值对映射）。
 >
@@ -25,7 +25,7 @@
 
 ## 集合框架体系
 
-![img](/Users/yangxiansheng/笔记/images/java-coll.png)
+![img](/images/java-coll.png)
 
 ​	Java 集合框架提供了一套性能优良，使用方便的接口和类，java集合框架位于java.util包中， 所以当使用集合框架的时候需要进行导包。
 
@@ -252,7 +252,7 @@ List接口方法补充：
 
 > ArrayList继承了AbstractList，并实现了LIst接口。
 
-![img](/Users/yangxiansheng/笔记/images/ArrayList-1-768x406-1.png)
+![img](/images/ArrayList-1-768x406-1.png)
 
 ArrayList类位于java.util包中，使用前需引入
 
@@ -271,11 +271,11 @@ ArrayList<E> objectName =new ArrayList<>();　 // 初始化
 - 链表可以分为单向链表和双向链表。
 - 一个单向链表包含两个值，当前节点的值和指向下一个节点地址的值
 
-![img](/Users/yangxiansheng/笔记/images/408px-Singly-linked-list.svg_.png)
+![img](/images/408px-Singly-linked-list.svg_.png)
 
 - 一个双向链表有三个整数值，当前节点数值，向前的节点链接，向后的节点链接。
 
-![img](/Users/yangxiansheng/笔记/images/610px-Doubly-linked-list.svg_.png)
+![img](/images/610px-Doubly-linked-list.svg_.png)
 
 - LinkedList类似于ArrayList，也是一种常用的数据容器，与ArrayLIst相比，LinkedList的增加和删除操作效率更高，而查找和修改的操作较低
 
@@ -291,7 +291,7 @@ ArrayList<E> objectName =new ArrayList<>();　 // 初始化
 
 ### LinkedList继承的接口和类
 
-![img](/Users/yangxiansheng/笔记/images/20190328164737.png)
+![img](/images/20190328164737.png)
 
 > - LinkedList继承了AbstractSequentialList类。
 > - LinkedList实现了Queue接口，可作为队列使用。
@@ -329,4 +329,4 @@ LinkedList<E> list = new LinkedList(Collection<? extends E> c);//使用集合创
 - 是无序的，即不会记录插入的顺序
 - 继承于AbstractMap，实现了 Map、Cloneable、java.io.Serializable 接口。
 
-![img](/Users/yangxiansheng/笔记/images/WV9wXLl.png)
+![img](/images/WV9wXLl.png)

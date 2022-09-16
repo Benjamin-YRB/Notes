@@ -28,7 +28,7 @@ at com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:53)
 
 #### Idea编译时出现GC overhead limit exceeded
 
-![企业微信截图_f282c4cc-54d7-4add-80f4-4c54838c361f](/Users/yangxiansheng/笔记/images/企业微信截图_f282c4cc-54d7-4add-80f4-4c54838c361f.png)
+![企业微信截图_f282c4cc-54d7-4add-80f4-4c54838c361f](/images/企业微信截图_f282c4cc-54d7-4add-80f4-4c54838c361f.png)
 
 在maven设置中调整compiler的内存大小即可
 
@@ -62,9 +62,9 @@ at com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:53)
 
 controller接收参数注解要和调用的service一致。
 
-![image-20211020173043175](/Users/yangxiansheng/笔记/images/image-20211020173043175.png)
+![image-20211020173043175](/images/image-20211020173043175.png)
 
-![image-20211020173120391](/Users/yangxiansheng/笔记/images/image-20211020173120391.png)
+![image-20211020173120391](/images/image-20211020173120391.png)
 
 
 
@@ -242,7 +242,7 @@ String result = new String(bytes,StandardCharsets.UTF_8);
 
 时间点有可能会是1970年
 
-
+SimpleDateFormat中有Calendar类，calendar类内部有状态因此有多线程问题。
 
 
 
@@ -294,6 +294,10 @@ String result = new String(bytes,StandardCharsets.UTF_8);
 
 
 
+
+
+
+
 请求进来后卡住不往下走了  后续请求也无法响应，这时确认一下本机CPU资源
 
 
@@ -316,5 +320,18 @@ String result = new String(bytes,StandardCharsets.UTF_8);
 
 ![image-20220610175225121](images\image-20220610175225121.png)
 
+更换bean注册方式，提示已存在同类型bean，说明原配置没有问题注册成功。
+
+原因：获取bean时名称错误，注册的bean 名称开头是两个大写字母如：PHService，获取时也是PHService而非PhService。
 
 
+
+
+
+
+
+
+
+#### 美的项目，拖车任务下发之后，隔一段时间任务柜上商品就会被逻辑删除，没有相关操作记录。
+
+原因：其他人写的更新sql，没有条件也不判空 ，全表更新为逻辑删除
