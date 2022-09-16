@@ -26,7 +26,7 @@ at com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:53)
 
 
 
-#### Idea编译时出现GC overhead limit exceeded
+## Idea编译时出现GC overhead limit exceeded
 
 ![企业微信截图_f282c4cc-54d7-4add-80f4-4c54838c361f](/images/企业微信截图_f282c4cc-54d7-4add-80f4-4c54838c361f.png)
 
@@ -193,7 +193,7 @@ FROM
     group by t.creator
 ```
 
-#### 打印GC日志
+### 打印GC日志
 
 -XX:+PrintGCDetails
 
@@ -221,18 +221,12 @@ java虚拟机启动参数配置错误，去掉或者重新检查参数。
 
 
 
+##### MySQL查询24小时内数据
 
-
-
-
-
-
-byte数组转String：
-
-```java
-byte[] bytes = "中文".getBytes();
-String result = new String(bytes,StandardCharsets.UTF_8);
+```sql
+where time >= (now() - interval 24 hour)
 ```
+
 
 
 
@@ -323,6 +317,9 @@ SimpleDateFormat中有Calendar类，calendar类内部有状态因此有多线程
 更换bean注册方式，提示已存在同类型bean，说明原配置没有问题注册成功。
 
 原因：获取bean时名称错误，注册的bean 名称开头是两个大写字母如：PHService，获取时也是PHService而非PhService。
+
+
+#### gitlab在线解决merge request时解决冲突会将目标分支合并到源分支，因此需要有目标分支推送权限的人在本地合并，不能在线合并。
 
 
 
