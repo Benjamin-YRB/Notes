@@ -759,7 +759,93 @@ Stream.iterate(new int[]{0,1},a -> new int[] {a[1],a[0]+a[1]})
 
 ### 归约和汇总
 
-​	
+​	需要把流中所有的项目合并成一个结果时就可以用。这个结果可以是任何类型，可以复杂如代表一棵树的多级映射，或简单如一个整数。
+
+- 计数:counting()
+
+  ```java
+  long count = items.stream().collect(Collectors.counting());
+  ```
+
+- 查找流中最大值和最小值
+
+  可以使用两个收集器maxBy和minBy来计算最大小值。这两个收集器接收一个Comparator参数来比较流中的元素。可以创建一个Comparator来进行传参：
+
+  ```java
+  Comparator<person> personComparator = 
+    Comparator.comparingInt(person::getAge);
+  //Optional是为了防止people为空
+  Optional<person> maxAge = people.stream().collect(maxBy(personComparator));
+  ```
+
+  > Optional
+  >
+  > ​	java 8引入了Optional，它是一个容器，可以包含值或不包含值。
+
+- 求和：
+
+  - 汇总
+
+  Collectors类专门提供了一个汇总方法：Collectors.summingInt。它可以接受一个把对象映射为求和所需int的函数，并返回一个收集器；该收集器在传递给collect方法之后即执行我们需要的汇总操作。如：
+
+  ```java
+  //遍历流时将person对象映射成年龄int并累加到一个累加器（初始值为0）
+  int total = items.stream().collect(summingInt(person::gerAge));
+  ```
+
+  还有诸如summingDouble、summingLong等方法
+
+  - 平均：Collectors.averageInt、Collectors.averageDouble、Collectors.averageLong
+
+  - 还有一种工厂方法一次性返回数值流中计算值，如个数、总和、平均值和最大值等：summarizingInt，该工厂方法提供的收集器会返回一个IntSummaryStatistics类，类中有各种方法来获取上述计算出的值。
+
+    
+
+#### 连接字符串
+
+​	joining工厂方法返回的收集器会把对流中每个对象应用一个toString()方法得到的所有字符串连接成一个字符串，如：
+
+```java
+String names = item.stream().map(item::getName).collect(Collectors.joining());
+//还有一个重载版本接受一个字符串的连接符
+String names = item.stream().map(item::getName).collect(Collectors.joining("、"));
+```
+
+> joining在内部使用了StringBuilder来连接字符串。
+
+#### 广义上的归约汇总
+
+​	事实上所有已讨论的收集器都是reducing工厂方法定义的归约过程的特殊情况而已。Collectors.reducing方法是这些共产该方法的一般化，都可以使用reducing方法来实现，如：
+
+```java
+String names = people.stream()
+  .collect(Collectors.reducing(new String(), Person::getName,(s1,s2) -> s1.concat(s2)));
+```
+
+> reducing有多个参数版本：单参数、双参数、三参数
+>
+> ![image-20220101075606258](images\image-20220101075606258.png)
+>
+> 三参数版本
+>
+> 1. 归约操作的起始值，也就是流中没有元素时返回的值。
+> 2. 转换函数，将流中元素转换为其他类型。
+> 3. BinaryOperator，将两个项目累积成一个同类型的值。
+>
+> 单参数版本：三参数的特殊版本
+>
+> 1. 只有一个BinaryOPerator操作，将两个项目累积成一个同类型的值。
+>
+>    把流中第一个元素作为初始值，转换函数是一个恒等函数，即不转换（输出就是输入）。
+>
+>    reducing操作会返回一个Optional<>对象来避免对空流进行归约返回null导致空指针异常。
+
+> ```java
+> public interface BinaryOperator<T> extends BiFunction<T,T,T> 
+> //意味着BinaryOperator要接受两个同类型参数，并且返回一个该类型结果。
+> ```
+
+
 
 ### 分组
 
@@ -794,7 +880,20 @@ Map<String,Map<String,Dish>>   map =  menu.stream().collect(groupingBy(Dish::get
 
 #### 按子组收集数据
 
-​	双参数版本的groupingBy第二个参数传入的可以是任何类型，而不一定是另一个groupingBy
+​	双参数版本的groupingBy第二个参数传入的收集器可以是任何类型，而不一定是另一个groupingBy，传入的收集器实际上是对第一次分组之后的每个流进行收集。
+
+```java
+Map<String, Optional<Person>> collect = people.stream().collect(Collectors.groupingBy(Person::getName, Collectors.maxBy(Comparator.comparingInt(Person::getAge))));
+```
+
+上述收集结果中Map的value值是Optional包裹的值，可以使用Collectors.collectingAndThen这个工厂方法返回的收集器指定值的类型。
+
+```java
+Map<String, Person> collect = people.stream().collect(Collectors.groupingBy(Person::getName, Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparingInt(Person::getAge)), Optional::get)));
+```
+
+> 这个工厂方法接收两个参数——要转换的收集器以及转换函数，并返回另一个收集器，这个收集器相当于旧收集器的包装，collect操作的最后一部就是将返回值用转换函数做一个映射，上述例子中就是用Optional::get将Optional类型转成Optional包裹的类型。
+>
 
 
 
@@ -804,9 +903,7 @@ Map<String,Map<String,Dish>>   map =  menu.stream().collect(groupingBy(Dish::get
 
 
 
-
-
-### 构建流
+# 构建流
 
 ​	可以从值序列、数组、文件来创建流，甚至由生成函数来创建无限流。
 
@@ -885,128 +982,6 @@ try{
    > ​	生成的供应源（Math.random）是无状态的：它不会在任何地方记录任何值，以备以后计算使用。但也可以使用有状态的供应源，存储状态并在生成下一个值时使用。
    >
    > ​	但要注意的是在并行代码中使用有状态的供应源是不安全的。
-
-## 用流收集数据
-
-- 使用Collectors类创建和使用收集器
-- 将数据流归约成一个值
-- 汇总：归约的特殊情况
-- 数据分组和分区
-- 开发自己的自定义收集器
-
-#### 收集器简介
-
-​	collect是一个归约操作（由Collector来参数化），接受一个收集器，用于处理流中的元素，并产生最终的结果。
-
-#### 收集器用作高级归约
-
-​	优秀的函数式API的设计的一个好处是更易复合和易用，可以简洁而灵活的定义collect用来生成结果集合的标准。
-
-​	具体：对流调用collect方法将流中的元素触发一个归约操作，遍历流中的每一个元素并让Collector进行处理。
-
-> 一般而言，Collector会对元素应用一个转换函数并将结果累积在一个数据结构中，从而产生这一过程的最终输出。
-
-#### 预定义收集器
-
-​	Collectors类中提供了许多工厂方法创建的收集器，主要提供了三大功能：
-
-- 将流元素归约和汇总为一个值
-- 元素分组
-- 元素分区
-
-##### 归约和汇总
-
-​	需要把流中所有的项目合并成一个结果时就可以用。这个结果可以是任何类型，可以复杂如代表一棵树的多级映射，或简单如一个整数。
-
-- 计数:counting()
-
-  ```java
-  long count = items.stream().collect(Collectors.counting());
-  ```
-
-- 查找流中最大值和最小值
-
-  可以使用两个收集器maxBy和minBy来计算最大小值。这两个收集器接收一个Comparator参数来比较流中的元素。可以创建一个Comparator来进行传参：
-
-  ```java
-  Comparator<person> personComparator = 
-    Comparator.comparingInt(person::getAge);
-  //Optional是为了防止people为空
-  Optional<person> maxAge = people.stream().collect(maxBy(personComparator));
-  ```
-
-  > Optional
-  >
-  > ​	java 8引入了Optional，它是一个容器，可以包含值或不包含值。
-
-- 求和：
-
-  - 汇总
-
-  Collectors类专门提供了一个汇总方法：Collectors.summingInt。它可以接受一个把对象映射为求和所需int的函数，并返回一个收集器；该收集器在传递给collect方法之后即执行我们需要的汇总操作。如：
-
-  ```java
-  //遍历流时将person对象映射成年龄int并累加到一个累加器（初始值为0）
-  int total = items.stream().collect(summingInt(person::gerAge));
-  ```
-
-  还有诸如summingDouble、summingLong等方法
-
-  - 平均：Collectors.averageInt、Collectors.averageDouble、Collectors.averageLong
-
-  - 还有一种工厂方法一次性返回数值流中计算值，如个数、总和、平均值和最大值等：summarizingInt，该工厂方法提供的收集器会返回一个IntSummaryStatistics类，类中有各种方法来获取上述计算出的值。
-
-    
-
-### 连接字符串
-
-​	joining工厂方法返回的收集器会把对流中每个对象应用一个toString()方法得到的所有字符串连接成一个字符串，如：
-
-```java
-String names = item.stream().map(item::getName).collect(Collectors.joining());
-//还有一个重载版本接受一个字符串的连接符
-String names = item.stream().map(item::getName).collect(Collectors.joining("、"));
-```
-
-> joining在内部使用了StringBuilder来连接字符串。
-
-### 广义上的归约汇总
-
-​	事实上所有已讨论的收集器都是reducing工厂方法定义的归约过程的特殊情况而已。Collectors.reducing方法是这些共产该方法的一般化，都可以使用reducing方法来实现，如：
-
-```java
-String names = people.stream()
-  .collect(Collectors.reducing(new String(), Person::getName,(s1,s2) -> s1.concat(s2)));
-```
-
-> reducing有多个参数版本：单参数、双参数、三参数
->
-> ![image-20220101075606258](images\image-20220101075606258.png)
->
-> 三参数版本
->
-> 1. 归约操作的起始值，也就是流中没有元素时返回的值。
-> 2. 转换函数，将流中元素转换为其他类型。
-> 3. BinaryOperator，将两个项目累积成一个同类型的值。
->
-> 单参数版本：三参数的特殊版本
->
-> 1. 只有一个BinaryOPerator操作，将两个项目累积成一个同类型的值。
->
->    把流中第一个元素作为初始值，转换函数是一个恒等函数，即不转换（输出就是输入）。
->
->    reducing操作会返回一个Optional<>对象来避免对空流进行归约返回null导致空指针异常。
-
-> ```java
-> public interface BinaryOperator<T> extends BiFunction<T,T,T> 
-> //意味着BinaryOperator要接受两个同类型参数，并且返回一个该类型结果。
-> ```
-
-
-
-#### 自定义Collector实现分组分组归约
-
-心心念念很久的功能
 
 
 

@@ -1,4 +1,74 @@
-使用Junit时出现：java.lang.Exception: No tests found matching Method **Test2**(pojo.personTest) from org.junit.internal.requests.ClassRequest@69222c14 at org.junit.internal.requests.FilterRequest.getRunner(FilterRequest.java:40)
+# 流程
+
+## Linux安装MongoDb
+
+上传安装包到指定目录 解压tgz文件
+
+```bash
+##解压安装包
+tar zxvf mongodb-linux-x86_64-rhel70-3.0.4.tgz
+
+##在mongo bin目录下启动（无授权）
+./mongod -dbpath /home/mongoDb/mongodb-linux-x86_64-rhel70-3.0.4/data/ -port 27017 -logpath /home/mongoDb/mongodb-linux-x86_64-rhel70-3.0.4/logs/mongo.logs -logappend -fork
+
+##在mongo bin目录下启动（需授权）
+./mongod -dbpath /home/mongoDb/mongodb-linux-x86_64-rhel70-3.0.4/data/ -port 27017 -logpath /home/mongoDb/mongodb-linux-x86_64-rhel70-3.0.4/logs/mongo.logs -logappend -fork -auth
+
+##关闭MongoDb
+./mongod --shutdown --dbpath /home/mongoDb/mongodb-linux-x86_64-rhel70-3.0.4/data/
+
+
+
+db.createUser({
+... ...     user: "rtms",
+... ...     pwd: "rtms", 
+... ...     roles: [ { 
+... ...       role: "dbOwner", 
+... ...         db: "rtms" 
+... ...         } ]
+... ... })
+
+
+
+
+./mongod --shutdown --dbpath  /home/mongoDb/mongodb-linux-x86_64-rhel70-3.0.4/data/
+
+```
+
+
+
+# 工具使用
+
+### Httpclient
+
+```java
+	public static String postJsonInBody(String url,String jsonStr) throws IOException {
+		CloseableHttpClient client = HttpClients.createDefault();
+		HttpPost post = new HttpPost(url);
+		post.addHeader("Content-Type", "application/json;charset=UTF-8");
+		StringEntity stringEntity = new StringEntity(jsonStr, "UTF-8");
+		stringEntity.setContentEncoding("UTF-8");
+		post.setEntity(stringEntity);
+		CloseableHttpResponse response = client.execute(post);
+		return EntityUtils.toString(response.getEntity());
+	}
+```
+
+
+
+
+
+
+
+
+
+# 异常问题
+
+
+
+### 使用Junit时出现：
+
+java.lang.Exception: No tests found matching Method **Test2**(pojo.personTest) from org.junit.internal.requests.ClassRequest@69222c14 at org.junit.internal.requests.FilterRequest.getRunner(FilterRequest.java:40)
 at com.intellij.junit4.JUnit4IdeaTestRunner.startRunnerWithArgs(JUnit4IdeaTestRunner.java:50)
 at com.intellij.rt.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:33)
 at com.intellij.rt.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:220)
@@ -26,7 +96,7 @@ at com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:53)
 
 
 
-## Idea编译时出现GC overhead limit exceeded
+### Idea编译时出现GC overhead limit exceeded
 
 ![企业微信截图_f282c4cc-54d7-4add-80f4-4c54838c361f](/images/企业微信截图_f282c4cc-54d7-4add-80f4-4c54838c361f.png)
 
@@ -36,7 +106,7 @@ at com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:53)
 
 
 
-### %23 -> #
+### %23 -> ###
 
 前后端传值时请求行参数中含有%23 会变成# 导致模糊查询失败
 这是由于为了在http中传输特殊字符和汉字使用的一种编码格式
@@ -72,7 +142,7 @@ controller接收参数注解要和调用的service一致。
 
 
 
-#### Cannot resolve com.sinoservices.chainwork:billing-module-api:ASD-1.0.2-SNAPSHOT
+### Cannot resolve com.sinoservices.chainwork:billing-module-api:ASD-1.0.2-SNAPSHOT
 
 maven无法解析依赖，有可能是下载依赖时网络问题或其他原因导致本地仓库的包不完整，删除仓库中对应包之后重新拉取即可。
 
@@ -99,12 +169,6 @@ service的实现类加上Controller注解。
 
 
 ### mysql自增列是不是只能由主键自增，可否设置其他列为自增列？
-
-
-
-
-
-
 
 groupingBy传入第二个收集器使用reducing归约收集器时，不是针对分组后的values单个list进行归约，而是类似于流的扁平化，将values中所有的list拼接起来之后进行整体的归约，归约结果也很奇怪，后续研究研究。
 
@@ -135,7 +199,7 @@ Map<String, UserMachineQueryItem> result = data.stream().
 
 
 
-#### case when 
+### case when 
 
 ```sql
 SELECT 
@@ -201,7 +265,7 @@ FROM
 
 
 
-#### 导入3000条以上数据，某个区间没有导入成功。
+### 导入3000条以上数据，某个区间没有导入成功。
 
 那个区间插入有问题，异常回滚了。
 
@@ -215,13 +279,13 @@ wifi链接显示受限制或者无连接，查看tcp/ip设置是否动态获取i
 
 
 
-#### idea启动tomcat无效：Unable to ping server at localhost:1099
+### idea启动tomcat无效：Unable to ping server at localhost:1099
 
 java虚拟机启动参数配置错误，去掉或者重新检查参数。
 
 
 
-##### MySQL查询24小时内数据
+### MySQL查询24小时内数据
 
 ```sql
 where time >= (now() - interval 24 hour)
@@ -232,7 +296,7 @@ where time >= (now() - interval 24 hour)
 
 
 
-#### 多线程下使用SimpleDateFormat转换异常
+### 多线程下使用SimpleDateFormat转换异常
 
 时间点有可能会是1970年
 
@@ -240,7 +304,7 @@ SimpleDateFormat中有Calendar类，calendar类内部有状态因此有多线程
 
 
 
-#### httpclient发送delete请求无法携带请求体
+### httpclient发送delete请求无法携带请求体
 
 重写一个delete方法继承post方法的父类即可。
 
@@ -248,7 +312,7 @@ SimpleDateFormat中有Calendar类，calendar类内部有状态因此有多线程
 
 
 
-#### idea启动tomcat在多少毫秒部署完成后卡住 不运行项目
+### idea启动tomcat在多少毫秒部署完成后卡住 不运行项目
 
 解决方案：尝试调整一下tomcat的虚拟机内存参数。
 
@@ -258,7 +322,7 @@ SimpleDateFormat中有Calendar类，calendar类内部有状态因此有多线程
 
 
 
-#### 老Web项目变更依赖
+### 老Web项目变更依赖
 
 在新加的jar包右键 add as Library
 
@@ -266,21 +330,21 @@ SimpleDateFormat中有Calendar类，calendar类内部有状态因此有多线程
 
 
 
-#### 记一次sql优化经历
+### 记一次sql优化经历
 
 多条件or查询有可能使索引失效，可以使用union拆开or条件查询 走单独的索引即可。
 
 
 
-#### 初始方案
+### 安卓listview赋值
 
-##### 安卓listView每滚动一次都会执行一次adapter中onBindITemView方法，然后我在item中的一个输入框添加了addTextChangedListener文本监听器来同步我修改item的值，每次滚动都会刷新item，从底部拉到顶，末尾的item的输入框的值会覆盖第一个item输入框的值--莫名其妙的BUG
+安卓listView每滚动一次都会执行一次adapter中onBindITemView方法，然后我在item中的一个输入框添加了addTextChangedListener文本监听器来同步我修改item的值，每次滚动都会刷新item，从底部拉到顶，末尾的item的输入框的值会覆盖第一个item输入框的值--莫名其妙的BUG
 
 
 
 #### 方案二
 
-##### setOnFocusChangeListener添加了焦点改变事件无用，只有在获取焦点时生效，当焦点在文本框时直接点击签收按钮，不会触发失去焦点事件，无法同步修改datalist中的值。
+setOnFocusChangeListener添加了焦点改变事件无用，只有在获取焦点时生效，当焦点在文本框时直接点击签收按钮，不会触发失去焦点事件，无法同步修改datalist中的值。
 
 #### --解决方案
 
@@ -306,9 +370,7 @@ SimpleDateFormat中有Calendar类，calendar类内部有状态因此有多线程
 
 
 
-#### spring ioc容器根据bean名称找不到bean
-
-
+### spring ioc容器根据bean名称找不到bean
 
 解决过程：检查xml配置的包扫描路径，没有问题，
 
@@ -317,6 +379,7 @@ SimpleDateFormat中有Calendar类，calendar类内部有状态因此有多线程
 更换bean注册方式，提示已存在同类型bean，说明原配置没有问题注册成功。
 
 原因：获取bean时名称错误，注册的bean 名称开头是两个大写字母如：PHService，获取时也是PHService而非PhService。
+
 
 
 #### gitlab在线解决merge request时解决冲突会将目标分支合并到源分支，因此需要有目标分支推送权限的人在本地合并，不能在线合并。
@@ -329,6 +392,13 @@ SimpleDateFormat中有Calendar类，calendar类内部有状态因此有多线程
 
 
 
-#### 美的项目，拖车任务下发之后，隔一段时间任务柜上商品就会被逻辑删除，没有相关操作记录。
+### 美的项目，拖车任务下发之后，隔一段时间任务柜上商品就会被逻辑删除，没有相关操作记录。
 
 原因：其他人写的更新sql，没有条件也不判空 ，全表更新为逻辑删除
+
+
+
+### 使用@slf4j注解
+
+已在spring-boot-starter中存在，pom引入lombok即可。
+
