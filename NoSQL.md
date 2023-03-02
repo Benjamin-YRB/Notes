@@ -1172,4 +1172,98 @@ publish channel "hello"
 
 ### redis主从复制
 
+1. 先搭建集群（开启多个redis服务，各自使用单独的配置启动）
+
+   从库配置文件和主库配置文件区别
+
+   > 1. 端口
+   > 2. pid
+   > 3. log文件名
+   > 4. dump文件名
+
+```bash
+#查看redis复制信息
+PS D:\Software\Redis> redis-cli ##连接redis
+127.0.0.1:6379> info replication ##打印信息
+# Replication
+role:master ##主节点
+connected_slaves:0 ##没有从库
+master_replid:e991b99d5aff88fc6928f6cded8681ae077cedfd
+master_replid2:0000000000000000000000000000000000000000
+master_repl_offset:0
+second_repl_offset:-1
+repl_backlog_active:0
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:0
+repl_backlog_histlen:0
+```
+
+​	默认情况下每个服务都是主节点，只须配置从机为从节点即可
+
+```bash
+#配置6380端口的redis的主节点为6379端口的redis
+127.0.0.1:6380> slaveof 127.0.0.1 6379
+OK
+
+#6380端口的redis服务已变为从节点
+127.0.0.1:6380> info replication
+# Replication
+role:slave
+master_host:127.0.0.1
+master_port:6379
+master_link_status:up
+master_last_io_seconds_ago:4
+master_sync_in_progress:0
+slave_repl_offset:322
+slave_priority:100
+slave_read_only:1
+connected_slaves:0
+master_replid:4228eb7c32059a3cb93007560d9b45dca84b00a4
+master_replid2:0000000000000000000000000000000000000000
+master_repl_offset:322
+second_repl_offset:-1
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:1
+repl_backlog_histlen:322
+#------------------------------------------------------------------------
+#6379端口的redis服务已有一台从机
+127.0.0.1:6379> info replication
+# Replication
+role:master
+connected_slaves:1 #一台从机
+slave0:ip=127.0.0.1,port=6380,state=online,offset=154,lag=1 #从机状态
+master_replid:4228eb7c32059a3cb93007560d9b45dca84b00a4
+master_replid2:0000000000000000000000000000000000000000
+master_repl_offset:154
+second_repl_offset:-1
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:1
+repl_backlog_histlen:154
+```
+
+​	上述过程使用命令行来配置从库，生产环境一般在配置文件中配置从库。
+
+> 主从复制是redis支持高可用和故障转移的基础
+
+### 哨兵模式
+
+​	哨兵模式可以在非集群的情况下提供高可用的redis服务，哨兵节点还可以提供其他附带的任务，如监控、通知并充当客户端的配置提供程序：
+
+- 监控：哨兵节点会不断地检查主节点和从节点是否如预期一样工作。
+- 通知：哨兵节点可以在监控的redis节点出错时通知系统管理员或者其他应用程序，如API等。
+- 自动故障转移：当主节点故障时，哨兵节点会开始故障转移过程：将一个从节点提拔为主节点，并且配置其余从节点使用新的主节点，并且通知使用Redis服务器的应用程序连接时使用新地址。
+- 提供配置：哨兵节点充当客户端服务发现的权威来源，当客户端连接至哨兵节点时询问当前Redis服务主节点，如果发生了故障转移，则哨兵节点会报告新的主节点。
+
+### ![image-20230302165921811](\images\image-20230302165921811.png)
+
+
+
+
+
+
+
+
+
 ### Redis缓存穿透和雪崩

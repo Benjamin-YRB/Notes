@@ -1167,7 +1167,7 @@ public final boolean releaseShared(int arg){
 
 #### ConcurrentHashMap的初始化
 
-​	COncurrentHashMap的初始化方法是通过initialCapacity、loadFactor和concurrencyLevel等几个参数来初始化数组、段偏移量segmentShift、段掩码segmentMask和每个Segment里的HashEntry数组来实现的。
+​	ConcurrentHashMap的初始化方法是通过initialCapacity、loadFactor和concurrencyLevel等几个参数来初始化数组、段偏移量segmentShift、段掩码segmentMask和每个Segment里的HashEntry数组来实现的。
 
 #### 初始化segment数组
 
